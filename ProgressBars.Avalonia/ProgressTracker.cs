@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Avalonia;
 using Avalonia.Controls;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 public sealed class ProgressTracker
 {

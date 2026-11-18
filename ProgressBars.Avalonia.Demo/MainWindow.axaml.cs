@@ -4,7 +4,7 @@ using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Avalonia.ProgressBar.Demo
+namespace ProgressBars.Avalonia.Demo
 {
     public partial class MainWindow : Window
     {

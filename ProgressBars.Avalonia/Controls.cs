@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
@@ -8,7 +9,7 @@ using Avalonia.Media;
 using Avalonia.Media.Immutable;
 using Avalonia.Threading;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 /// <summary>One shared frame timer for every animated control; it only runs while something is on screen.</summary>
 internal static class Ticker

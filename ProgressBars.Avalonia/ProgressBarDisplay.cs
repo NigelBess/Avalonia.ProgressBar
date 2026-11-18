@@ -1,10 +1,11 @@
 using System;
 using System.Globalization;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 public sealed class ProgressBarDisplay : Control
 {

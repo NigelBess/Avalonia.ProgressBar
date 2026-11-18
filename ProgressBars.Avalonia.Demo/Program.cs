@@ -1,7 +1,7 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
 
-namespace Avalonia.ProgressBar.Demo
+namespace ProgressBars.Avalonia.Demo
 {
     internal class Program
     {

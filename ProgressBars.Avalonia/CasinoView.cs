@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
-using static Avalonia.ProgressBar.Art;
+using static ProgressBars.Avalonia.Art;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 /// <summary>Reel strips and payouts. A symbol's weight is how many times it appears on each 32-stop reel.</summary>
 internal static class Slots

@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-using static Avalonia.ProgressBar.Art;
+using static ProgressBars.Avalonia.Art;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 internal enum FarmTool { Hand, WateringCan, Seed }
 

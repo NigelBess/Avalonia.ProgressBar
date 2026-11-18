@@ -1,8 +1,8 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace Avalonia.ProgressBar.Demo
+namespace ProgressBars.Avalonia.Demo
 {
     public partial class App : Application
     {

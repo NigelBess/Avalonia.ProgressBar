@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Avalonia;
 using Avalonia.Media;
 using Avalonia.Media.Immutable;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 internal enum SlotSymbol { Seven, Diamond, Bar, Bell, Horseshoe, Clover, Lemon, Cherry }
 

@@ -1,9 +1,10 @@
 using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 internal enum Screen { Menu, Farming, Casino, Mining }
 

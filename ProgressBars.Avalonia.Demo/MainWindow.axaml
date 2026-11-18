@@ -1,11 +1,11 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:game="clr-namespace:Avalonia.ProgressBar;assembly=Avalonia.ProgressBar"
-        x:Class="Avalonia.ProgressBar.Demo.MainWindow"
+        xmlns:game="clr-namespace:ProgressBars.Avalonia;assembly=ProgressBars.Avalonia"
+        x:Class="ProgressBars.Avalonia.Demo.MainWindow"
         x:DataType="game:Progress"
         Width="460" Height="330"
         WindowStartupLocation="CenterScreen"
-        Title="Avalonia.ProgressBar demo host">
+        Title="ProgressBars.Avalonia demo host">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="12">
         <TextBlock Text="A host app that references the package." HorizontalAlignment="Center" />
         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">

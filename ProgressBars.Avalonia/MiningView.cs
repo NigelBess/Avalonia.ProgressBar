@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
-using static Avalonia.ProgressBar.Art;
+using static ProgressBars.Avalonia.Art;
 
-namespace Avalonia.ProgressBar;
+namespace ProgressBars.Avalonia;
 
 /// <summary>Hold the button to mine: one coin for every ten uninterrupted seconds.</summary>
 internal sealed class MiningView : Panel

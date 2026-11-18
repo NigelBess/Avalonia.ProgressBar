@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -6,7 +6,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
 
     <IsPackable>true</IsPackable>
-    <PackageId>ProgressBar.Avalonia</PackageId>
+    <PackageId>ProgressBars.Avalonia</PackageId>
     <Version>1.0.0</Version>
     <Description>A coin-earning game window (farming, casino and mining mini games) that can be opened from any Avalonia app.</Description>
     <PackageTags>avalonia;game</PackageTags>
@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <!-- Lets the demo host use the testing aids (add coins, advance time) without making them public API. -->
-    <InternalsVisibleTo Include="Avalonia.ProgressBar.Demo" />
+    <InternalsVisibleTo Include="ProgressBars.Avalonia.Demo" />
   </ItemGroup>
 
   <ItemGroup>

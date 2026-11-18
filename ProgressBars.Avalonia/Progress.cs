@@ -1,6 +1,7 @@
 using System.ComponentModel;
 
-namespace Avalonia.ProgressBar;
+using Avalonia;
+namespace ProgressBars.Avalonia;
 
 public sealed class Progress : INotifyPropertyChanged
 {

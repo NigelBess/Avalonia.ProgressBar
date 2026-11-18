@@ -1,6 +1,7 @@
 using System;
 
-namespace Avalonia.ProgressBar;
+using Avalonia;
+namespace ProgressBars.Avalonia;
 
 public static class GlobalProgress
 {

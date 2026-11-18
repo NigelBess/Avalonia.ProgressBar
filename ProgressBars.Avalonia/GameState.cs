@@ -3,7 +3,8 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Avalonia.ProgressBar;
+using Avalonia;
+namespace ProgressBars.Avalonia;
 
 internal enum CropKind { Radish, Potato, Watermelon, Carrot, Corn, Pumpkin, Tomato, Strawberry }
 

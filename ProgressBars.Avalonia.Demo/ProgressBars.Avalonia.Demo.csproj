@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avalonia.ProgressBar\Avalonia.ProgressBar.csproj" />
+    <ProjectReference Include="..\ProgressBars.Avalonia\ProgressBars.Avalonia.csproj" />
   </ItemGroup>
 </Project>
