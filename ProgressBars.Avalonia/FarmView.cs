@@ -15,7 +15,7 @@ internal enum FarmTool { Hand, WateringCan, Seed }
 /// <summary>Buy seeds, plant them, water them in the 30-45 minute window and harvest after an hour.</summary>
 internal sealed class FarmView : Panel
 {
-    const string WateringRule = "it was not watered between 30 and 45 minutes after planting";
+    const string WateringRule = "crops must be watered in the first 5 minutes and again between 30 and 45 minutes after planting";
 
     readonly CoinGameView host;
     readonly PlotField plot;
@@ -36,7 +36,7 @@ internal sealed class FarmView : Panel
         plot.Toast += ShowToast;
         plot.DeadCountChanged += dead => deadBanner.Text = dead == 0
             ? ""
-            : $"{dead} {(dead == 1 ? "crop has" : "crops have")} died because {WateringRule}. Click a dead crop to clear it.";
+            : $"{dead} {(dead == 1 ? "crop has" : "crops have")} died: {WateringRule}. Click a dead crop to clear it.";
         toastTimer.Tick += (_, _) =>
         {
             toastTimer.Stop();
@@ -286,7 +286,7 @@ internal sealed class PlotField : AnimatedControl
             case TileStatus.Dead:
                 state.Clear(index);
                 Toast?.Invoke($"That {tile!.Crop.ToString().ToLowerInvariant()} died because it was not watered " +
-                              "between 30 and 45 minutes after planting. The plot is clear to replant.");
+                              $"{GameState.MissedWatering(tile)}. The plot is clear to replant.");
                 break;
             case TileStatus.Empty when tool == FarmTool.Seed:
                 if (!state.Plant(index, seed))
@@ -369,13 +369,13 @@ internal sealed class PlotField : AnimatedControl
         return state.Status(index, now) switch
         {
             TileStatus.Growing =>
-                $"{tile.Crop}: growing. It must be watered between the 30 and 45 minute mark. " +
+                $"{tile.Crop}: growing. It must be watered again between the 30 and 45 minute mark. " +
                 $"Watering opens in {Clock(GameState.WaterFrom - age)}.",
             TileStatus.Thirsty =>
-                $"{tile.Crop}: thirsty! Water it within {Clock(GameState.WaterUntil - age)} or it will die.",
+                $"{tile.Crop}: thirsty! Water it within {Clock(GameState.WaterDeadline(tile) - age)} or it will die.",
             TileStatus.Watered => $"{tile.Crop}: watered. Ready to harvest in {Clock(GameState.RipeAt - age)}.",
             TileStatus.Ripe => $"{tile.Crop}: ready! Click to harvest it for {GameState.HarvestValue} coins.",
-            _ => $"{tile.Crop}: dead. It was not watered between 30 and 45 minutes after planting. Click to clear the plot.",
+            _ => $"{tile.Crop}: dead. It was not watered {GameState.MissedWatering(tile)}. Click to clear the plot.",
         };
     }
 
@@ -443,7 +443,7 @@ internal sealed class PlotField : AnimatedControl
     {
         var r = TileRect(index);
         var tile = state.Tile(index);
-        var wet = tile?.WateredUtc != null;
+        var wet = tile != null && GameState.IsSoilWet(tile, now);
         ctx.DrawRectangle(B(wet ? "#5a391b" : "#a8733f"), P(wet ? "#3b2410" : "#7c5128", 2), r, 8, 8);
         for (var k = 1; k <= 3; k++)
         {
@@ -466,7 +466,9 @@ internal sealed class PlotField : AnimatedControl
                     break;
 
                 case TileStatus.Thirsty:
-                    Plant(ctx, art, 0);
+                    // Thirsty in the first window it is still a sprout; in the second it is a leafy plant.
+                    if (tile.EarlyWateredUtc == null) Sprout(ctx, art, Math.Clamp(age / GameState.WaterFrom, 0, 1));
+                    else Plant(ctx, art, 0);
                     using (ctx.PushOpacity(0.35 + 0.65 * pulse))
                         ctx.DrawRectangle(null, P("#38bdf8", 3), r.Deflate(1.5), 7, 7);
                     Drop(ctx, Pt(r.Right - 12, r.Y + 13 + 2 * pulse), 6.5, B("#38bdf8"), P("#0c4a6e", 1.5));

@@ -14,11 +14,18 @@ internal sealed class PlotTile
 {
     public CropKind Crop { get; set; }
     public DateTime PlantedUtc { get; set; }
+
+    /// <summary>When it was watered in the first window (the first 5 minutes), if it has been.</summary>
+    public DateTime? EarlyWateredUtc { get; set; }
+
+    /// <summary>When it was watered in the second window (30 to 45 minutes), if it has been.</summary>
     public DateTime? WateredUtc { get; set; }
 }
 
 internal sealed class SaveData
 {
+    /// <summary>Format of this save; saves written before version 2 have no <see cref="PlotTile.EarlyWateredUtc"/>.</summary>
+    public int Version { get; set; }
     public long Coins { get; set; } = GameState.StartingCoins;
     public int[] Seeds { get; set; } = new int[GameState.CropCount];
     public PlotTile?[] Plots { get; set; } = new PlotTile?[GameState.Rows * GameState.Cols];
@@ -33,6 +40,10 @@ internal sealed class GameState
     public const int Rows = 6, Cols = 8, CropCount = 8;
     public const long StartingCoins = 50;
     public const int SeedPrice = 1, HarvestValue = 2;
+    const int SaveVersion = 2;
+
+    /// <summary>A crop must be watered once before this age, and again between <see cref="WaterFrom"/> and <see cref="WaterUntil"/>.</summary>
+    public static readonly TimeSpan EarlyWaterUntil = TimeSpan.FromMinutes(5);
     public static readonly TimeSpan WaterFrom = TimeSpan.FromMinutes(30);
     public static readonly TimeSpan WaterUntil = TimeSpan.FromMinutes(45);
     public static readonly TimeSpan RipeAt = TimeSpan.FromMinutes(60);
@@ -67,6 +78,14 @@ internal sealed class GameState
         if (data.Coins < 0) data.Coins = 0;
         if (data.Seeds is not { Length: CropCount }) data.Seeds = Resize(data.Seeds, CropCount);
         if (data.Plots is not { Length: Rows * Cols }) data.Plots = Resize(data.Plots, Rows * Cols);
+        if (data.Version < SaveVersion)
+        {
+            // Crops planted before the first watering window existed are treated as having had it,
+            // so upgrading does not kill them.
+            foreach (var tile in data.Plots)
+                if (tile != null) tile.EarlyWateredUtc ??= tile.PlantedUtc;
+            data.Version = SaveVersion;
+        }
         return new GameState(data, path);
     }
 
@@ -127,10 +146,24 @@ internal sealed class GameState
         var tile = data.Plots[index];
         if (tile == null) return TileStatus.Empty;
         var age = utcNow - tile.PlantedUtc;
+        if (tile.EarlyWateredUtc == null)
+            return age < EarlyWaterUntil ? TileStatus.Thirsty : TileStatus.Dead;
         if (tile.WateredUtc == null)
             return age < WaterFrom ? TileStatus.Growing : age < WaterUntil ? TileStatus.Thirsty : TileStatus.Dead;
         return age >= RipeAt ? TileStatus.Ripe : TileStatus.Watered;
     }
+
+    /// <summary>The age by which a thirsty crop must be watered, for whichever window it is in.</summary>
+    public static TimeSpan WaterDeadline(PlotTile tile) => tile.EarlyWateredUtc == null ? EarlyWaterUntil : WaterUntil;
+
+    /// <summary>Which watering a dead crop missed, phrased to follow "it was not watered".</summary>
+    public static string MissedWatering(PlotTile tile) => tile.EarlyWateredUtc == null
+        ? "in the first 5 minutes after planting"
+        : "between 30 and 45 minutes after planting";
+
+    /// <summary>Soil is dark from a watering until the next one is due.</summary>
+    public static bool IsSoilWet(PlotTile tile, DateTime utcNow) =>
+        tile.WateredUtc != null || (tile.EarlyWateredUtc != null && utcNow - tile.PlantedUtc < WaterFrom);
 
     public bool Plant(int index, CropKind kind)
     {
@@ -145,7 +178,9 @@ internal sealed class GameState
     {
         var now = DateTime.UtcNow;
         if (Status(index, now) != TileStatus.Thirsty) return false;
-        data.Plots[index]!.WateredUtc = now;
+        var tile = data.Plots[index]!;
+        if (tile.EarlyWateredUtc == null) tile.EarlyWateredUtc = now;
+        else tile.WateredUtc = now;
         Commit();
         return true;
     }
@@ -160,6 +195,7 @@ internal sealed class GameState
         {
             if (tile == null) continue;
             tile.PlantedUtc -= by;
+            if (tile.EarlyWateredUtc != null) tile.EarlyWateredUtc -= by;
             if (tile.WateredUtc != null) tile.WateredUtc -= by;
         }
         Commit();
