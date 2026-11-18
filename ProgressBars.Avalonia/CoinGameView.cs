@@ -13,7 +13,7 @@ internal sealed class CoinGameWindow : Window
 {
     public CoinGameWindow(GameState state)
     {
-        Title = "Coin Game";
+        Title = "";
         Width = 960;
         Height = 640;
         MinWidth = 480;
