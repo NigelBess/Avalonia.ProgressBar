@@ -1,0 +1,4 @@
+﻿<Solution>
+  <Project Path="Avalonia.ProgressBar/Avalonia.ProgressBar.csproj" />
+  <Project Path="Avalonia.ProgressBar.Demo/Avalonia.ProgressBar.Demo.csproj" />
+</Solution>

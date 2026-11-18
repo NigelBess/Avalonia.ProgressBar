@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:game="clr-namespace:Avalonia.ProgressBar;assembly=Avalonia.ProgressBar"
+        x:Class="Avalonia.ProgressBar.Demo.MainWindow"
+        x:DataType="game:Progress"
+        Width="460" Height="330"
+        WindowStartupLocation="CenterScreen"
+        Title="Avalonia.ProgressBar demo host">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="12">
+        <TextBlock Text="A host app that references the package." HorizontalAlignment="Center" />
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+            <TextBlock Text="Wallet:" VerticalAlignment="Center" />
+            <game:ProgressBarDisplay Value="{Binding Value}" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" />
+            <TextBlock Text="Static:" VerticalAlignment="Center" Margin="16,0,0,0" />
+            <game:ProgressBarDisplay Value="100" VerticalAlignment="Center" />
+        </StackPanel>
+        <Button Content="Open the coin game" HorizontalAlignment="Center" Click="OpenGame" />
+
+        <TextBlock Text="Testing aids" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,12,0,0" />
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+            <TextBlock Text="Add coins:" VerticalAlignment="Center" />
+            <Button Content="+10" Tag="10" Click="AddCoins" />
+            <Button Content="+100" Tag="100" Click="AddCoins" />
+            <Button Content="+1,000" Tag="1000" Click="AddCoins" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+            <TextBlock Text="Advance farm time:" VerticalAlignment="Center" />
+            <Button Content="+1 min" Tag="1" Click="AdvanceTime" />
+            <Button Content="+5 min" Tag="5" Click="AdvanceTime" />
+            <Button Content="+15 min" Tag="15" Click="AdvanceTime" />
+            <Button Content="+1 hour" Tag="60" Click="AdvanceTime" />
+        </StackPanel>
+    </StackPanel>
+</Window>
