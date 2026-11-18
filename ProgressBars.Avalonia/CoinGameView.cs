@@ -156,12 +156,17 @@ internal sealed class CoinGameView : Decorator
 internal sealed class MenuView : Panel
 {
     readonly CoinGameView host;
-    readonly TextBlock count = Ui.Label("", 40, "#fde68a");
+    readonly ProgressBarDisplay count = new()
+    {
+        FontSize = 40,
+        FontWeight = FontWeight.Bold,
+        Foreground = Art.B("#fde68a"),
+        HorizontalAlignment = HorizontalAlignment.Center,
+    };
 
     public MenuView(CoinGameView host)
     {
         this.host = host;
-        count.HorizontalAlignment = HorizontalAlignment.Center;
 
         var question = Ui.Label("How do you want to earn more coins?", 20, "#cbd5e1", false);
         question.HorizontalAlignment = HorizontalAlignment.Center;
@@ -175,7 +180,6 @@ internal sealed class MenuView : Panel
             Margin = new Thickness(0, 0, 0, 40),
             Children =
             {
-                new SpinningCoin { Width = 130, Height = 130, HorizontalAlignment = HorizontalAlignment.Center },
                 count,
                 question,
                 new StackPanel
@@ -217,11 +221,7 @@ internal sealed class MenuView : Panel
         return card;
     }
 
-    void Refresh()
-    {
-        var coins = host.DisplayedCoins;
-        count.Text = coins == 1 ? "You have 1 coin" : $"You have {coins:N0} coins";
-    }
+    void Refresh() => count.Value = host.DisplayedCoins;
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {

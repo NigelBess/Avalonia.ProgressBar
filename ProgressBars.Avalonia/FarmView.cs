@@ -25,6 +25,7 @@ internal sealed class FarmView : Panel
     readonly GameButton handButton, canButton;
     readonly GameButton[] seedRows = new GameButton[GameState.CropCount];
     readonly TextBlock[] owned = new TextBlock[GameState.CropCount];
+    readonly Border[] ownedBadges = new Border[GameState.CropCount];
     readonly DispatcherTimer toastTimer = new() { Interval = TimeSpan.FromSeconds(6) };
 
     public FarmView(CoinGameView host)
@@ -99,14 +100,24 @@ internal sealed class FarmView : Panel
 
     GameButton SeedRow(CropKind kind)
     {
-        var count = owned[(int)kind] = Ui.Label("", 12, "#cbd5e1", false);
-        var names = new StackPanel
+        var name = Ui.Label(kind.ToString(), 15);
+        name.Margin = new Thickness(8, 0);
+        Grid.SetColumn(name, 1);
+
+        // How many of this seed the player holds: a big number, green when there are some, grey when none.
+        var count = owned[(int)kind] = Ui.Label("", 22);
+        count.HorizontalAlignment = HorizontalAlignment.Center;
+        var badge = ownedBadges[(int)kind] = new Border
         {
+            MinWidth = 46,
+            Height = 34,
+            CornerRadius = new CornerRadius(8),
+            Padding = new Thickness(8, 0),
+            Margin = new Thickness(0, 0, 8, 0),
             VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(8, 0),
-            Children = { Ui.Label(kind.ToString(), 15), count },
+            Child = count,
         };
-        Grid.SetColumn(names, 1);
+        Grid.SetColumn(badge, 2);
 
         var buy = new GameButton(new StackPanel
         {
@@ -118,7 +129,7 @@ internal sealed class FarmView : Panel
             Padding = new Thickness(10, 5),
             VerticalAlignment = VerticalAlignment.Center,
         };
-        Grid.SetColumn(buy, 2);
+        Grid.SetColumn(buy, 3);
         buy.Click += () =>
         {
             if (host.State.BuySeed(kind)) SetTool(FarmTool.Seed, kind);
@@ -127,8 +138,8 @@ internal sealed class FarmView : Panel
 
         var row = seedRows[(int)kind] = new GameButton(new Grid
         {
-            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto"),
-            Children = { new Painted(36, 36, (ctx, r) => Packet(ctx, kind, r)), names, buy },
+            ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto,Auto"),
+            Children = { new Painted(36, 36, (ctx, r) => Packet(ctx, kind, r)), name, badge, buy },
         }, "#2a3350")
         {
             Padding = new Thickness(8, 3),
@@ -156,7 +167,12 @@ internal sealed class FarmView : Panel
     void Refresh()
     {
         foreach (var kind in Enum.GetValues<CropKind>())
-            owned[(int)kind].Text = $"{host.State.SeedCount(kind)} in your bag";
+        {
+            var seeds = host.State.SeedCount(kind);
+            owned[(int)kind].Text = seeds.ToString("N0");
+            owned[(int)kind].Foreground = B(seeds > 0 ? "#ffffff" : "#94a3b8");
+            ownedBadges[(int)kind].Background = B(seeds > 0 ? "#16a34a" : "#3b4357");
+        }
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -391,7 +407,17 @@ internal sealed class PlotField : AnimatedControl
         }
         else if (tool == FarmTool.Seed && pointer is { } at)
         {
-            Packet(ctx, seed, new Rect(at.X + 12, at.Y + 14, 34, 34));
+            var packet = new Rect(at.X + 12, at.Y + 14, 34, 34);
+            Packet(ctx, seed, packet);
+            if (state.SeedCount(seed) == 0)
+            {
+                // Out of this seed: cross the packet out.
+                var x = packet.Deflate(3);
+                ctx.DrawLine(P("#7f1d1d", 5), x.TopLeft, x.BottomRight);
+                ctx.DrawLine(P("#7f1d1d", 5), x.TopRight, x.BottomLeft);
+                ctx.DrawLine(P("#ef4444", 2.5), x.TopLeft, x.BottomRight);
+                ctx.DrawLine(P("#ef4444", 2.5), x.TopRight, x.BottomLeft);
+            }
         }
 
         if (bubble.Life > 0) DrawBubble(ctx);
