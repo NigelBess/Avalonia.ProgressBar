@@ -6,7 +6,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
 
     <IsPackable>true</IsPackable>
-    <PackageId>Avalonia.ProgressBar</PackageId>
+    <PackageId>ProgressBar.Avalonia</PackageId>
     <Version>1.0.0</Version>
     <Description>A coin-earning game window (farming, casino and mining mini games) that can be opened from any Avalonia app.</Description>
     <PackageTags>avalonia;game</PackageTags>
