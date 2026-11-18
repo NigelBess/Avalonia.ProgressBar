@@ -15,10 +15,15 @@ namespace ProgressBars.Avalonia.Demo
         {
             InitializeComponent();
             DataContext = game.Progress;
-            Opened += (_, _) => game.Start(this);
         }
 
-        void OpenGame(object? sender, RoutedEventArgs e) => game.Start(this);
+        void StartGame(object? sender, RoutedEventArgs e) => game.Start(this);
+
+        const long ItemCost = 100;
+
+        // Spends the coins if there are enough; otherwise the library shows its own dialog.
+        void BuySomething(object? sender, RoutedEventArgs e) =>
+            BuyResult.Text = ProgressUpdate.Update(game, ItemCost, this) ? "Bought it!" : "";
 
         // The testing aids below use the library's internals, which only this demo can see.
 
